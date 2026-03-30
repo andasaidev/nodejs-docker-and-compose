@@ -1,0 +1,55 @@
+services:
+  # база данных PostgreSQL
+  database:
+    image: postgres:15
+    container_name: kupipodariday-db
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # бэкенд
+  backend:
+    build: ./backend
+    container_name: kupipodariday-backend
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=database
+    ports:
+      - "4000:4000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # фронтенд
+  frontend:
+    build: ./frontend
+    container_name: kupipodariday-frontend
+    restart: always
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
