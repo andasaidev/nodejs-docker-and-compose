@@ -15,7 +15,7 @@ const headersWithAuthorizeFn = () => ({
 });
 
 export const registerUser = (userData) => {
-  return fetch(`${URL}/signup/`, {
+  return fetch(`${URL}/auth/signup`, {
     method: "POST",
     headers: headersWithContentType,
     body: JSON.stringify(userData),
@@ -23,15 +23,15 @@ export const registerUser = (userData) => {
 };
 
 export const loginUser = (username, password) => {
-  return fetch(`${URL}/signin/`, {
+  return fetch(`${URL}/auth/signin`, {
     method: "POST",
     headers: headersWithContentType,
     body: JSON.stringify({ username, password }),
   })
     .then(checkResponse)
     .then((data) => {
-      if (data.access_token) {
-        sessionStorage.setItem("auth_token", data.access_token);
+      if (data.token) {
+        sessionStorage.setItem("auth_token", data.token);
         return data;
       } else {
         return;
@@ -48,7 +48,7 @@ export const refreshAndSet = (method, contextSetter) => {
 };
 
 export const getOwnUser = () => {
-  return fetch(`${URL}/users/me/`, {
+  return fetch(`${URL}/users/me`, {
     method: "GET",
     headers: headersWithAuthorizeFn(),
   }).then(checkResponse);
@@ -63,7 +63,7 @@ export const refreshUser = (contextSetter) => {
 };
 
 export const updateProfile = (user) => {
-  return fetch(`${URL}/users/me/`, {
+  return fetch(`${URL}/users/me`, {
     method: "PATCH",
     headers: headersWithAuthorizeFn(),
     body: JSON.stringify(user),
@@ -71,7 +71,7 @@ export const updateProfile = (user) => {
 };
 
 export const getCards = (page = 1) => {
-  return fetch(`${URL}/wishes/`, {
+  return fetch(`${URL}/wishes`, {
     method: "GET",
     headers: headersWithAuthorizeFn(),
   }).then(checkResponse);
@@ -173,7 +173,7 @@ export const removeCard = (id) => {
 };
 
 export const addCollection = (data) => {
-  return fetch(`${URL}/wishlistlists`, {
+  return fetch(`${URL}/wishlists`, {
     method: "POST",
     headers: headersWithAuthorizeFn(),
     body: JSON.stringify(data),
@@ -181,21 +181,21 @@ export const addCollection = (data) => {
 };
 
 export const getCollections = () => {
-  return fetch(`${URL}/wishlistlists`, {
+  return fetch(`${URL}/wishlists`, {
     method: "GET",
     headers: headersWithAuthorizeFn(),
   }).then(checkResponse);
 };
 
 export const getCollection = (id) => {
-  return fetch(`${URL}/wishlistlists/${id}`, {
+  return fetch(`${URL}/wishlists/${id}`, {
     method: "GET",
     headers: headersWithAuthorizeFn(),
   }).then(checkResponse);
 };
 
 export const deleteCollection = (id) => {
-  return fetch(`${URL}/wishlistlists/${id}`, {
+  return fetch(`${URL}/wishlists/${id}`, {
     method: "DELETE",
     headers: headersWithAuthorizeFn(),
   }).then(checkResponse);
